@@ -1,7 +1,6 @@
 package services
 
 import (
-	"fmt"
 	"github.com/kianooshaz/clean_service/core/contract/convertor"
 	"github.com/kianooshaz/clean_service/core/contract/interfaces"
 	"github.com/kianooshaz/clean_service/core/contract/params"
@@ -52,7 +51,6 @@ func (s *userService) Get(id int) (*params.PublicUser, interfaces.IServiceError)
 }
 
 func (s *userService) Update(entry *params.EntryUser, isPartial bool) (*params.PublicUser, interfaces.IServiceError) {
-	fmt.Println("test service") // todo delete
 	user, serErr := s.Repo.Get(entry.ID)
 	if serErr != nil {
 		return nil, serErr

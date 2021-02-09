@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"fmt"
 	"github.com/kianooshaz/clean_service/core/contract/interfaces"
 	"github.com/kianooshaz/clean_service/core/contract/params"
 	"github.com/kianooshaz/clean_service/core/utils/errors"
@@ -51,7 +50,6 @@ func (u userController) Get(c echo.Context) error {
 }
 
 func (u userController) Update(c echo.Context) error {
-	fmt.Println("test controller") // todo delete
 	user := &params.EntryUser{}
 	if err := c.Bind(user); err != nil {
 		return c.JSON(http.StatusBadRequest, errors.NewBadRequestError("invalid json body"))

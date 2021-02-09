@@ -76,7 +76,6 @@ func (u userRepository) Get(id int) (*entity.User, interfaces.IServiceError) {
 }
 
 func (u userRepository) Update(user *entity.User) (*entity.User, interfaces.IServiceError) {
-	fmt.Println("test repository") // todo delete
 	if err := db.Save(user).Error; err != nil {
 		logs.WarningLogger.Println(err)
 		return nil, errors.NewInternalServerError("database error", err)
