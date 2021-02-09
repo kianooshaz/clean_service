@@ -51,7 +51,7 @@ func NewUserRepository() interfaces.IUserRepository {
 
 func (u userRepository) Create(user *entity.User) (*entity.User, interfaces.IServiceError) {
 
-	if err := db.Model(&entity.User{}).Create(&user).Error; err != nil {
+	if err := db.Create(user).Error; err != nil {
 		logs.WarningLogger.Println(err)
 		return nil, errors.NewInternalServerError("database error", err)
 	}
@@ -63,7 +63,7 @@ func (u userRepository) Get(id int) (*entity.User, interfaces.IServiceError) {
 
 	user := &entity.User{Base: entity.Base{ID: uint(id)}}
 
-	if err := db.Model(&entity.User{}).First(&user).Error; err != nil {
+	if err := db.First(user).Error; err != nil {
 		if er.Is(err, gorm.ErrRecordNotFound) {
 			return nil, errors.NewNotFound("user not found")
 		}
@@ -76,8 +76,8 @@ func (u userRepository) Get(id int) (*entity.User, interfaces.IServiceError) {
 }
 
 func (u userRepository) Update(user *entity.User) (*entity.User, interfaces.IServiceError) {
-
-	if err := db.Model(&entity.User{}).Save(&u).Error; err != nil {
+	fmt.Println("test repository") // todo delete
+	if err := db.Save(user).Error; err != nil {
 		logs.WarningLogger.Println(err)
 		return nil, errors.NewInternalServerError("database error", err)
 	}
@@ -88,7 +88,7 @@ func (u userRepository) Update(user *entity.User) (*entity.User, interfaces.ISer
 func (u userRepository) Delete(id int) interfaces.IServiceError {
 
 	user := &entity.User{Base: entity.Base{ID: uint(id)}}
-	if err := db.Model(&entity.User{}).Delete(&user).Error; err != nil {
+	if err := db.Delete(user).Error; err != nil {
 		if er.Is(err, gorm.ErrRecordNotFound) {
 			return errors.NewNotFound("user not found")
 		}
@@ -101,7 +101,7 @@ func (u userRepository) Delete(id int) interfaces.IServiceError {
 
 func (u userRepository) FindAll() ([]entity.User, interfaces.IServiceError) {
 	var users []entity.User
-	if err := db.Model(&entity.User{}).Find(&users).Error; err != nil {
+	if err := db.Find(&users).Error; err != nil {
 		if er.Is(err, gorm.ErrRecordNotFound) {
 			return nil, errors.NewNotFound("user not found")
 		}

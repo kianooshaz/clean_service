@@ -1,0 +1,3 @@
+WARNING: 2021/02/09 15:37:45 User.go:81: WHERE conditions required
+WARNING: 2021/02/09 15:38:54 User.go:81: ERROR: syntax error at or near "$11" (SQLSTATE 42601)
+WARNING: 2021/02/09 15:39:09 User.go:81: ERROR: syntax error at or near "$11" (SQLSTATE 42601)

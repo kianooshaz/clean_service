@@ -1,6 +1,7 @@
 package services
 
 import (
+	"fmt"
 	"github.com/kianooshaz/clean_service/core/contract/convertor"
 	"github.com/kianooshaz/clean_service/core/contract/interfaces"
 	"github.com/kianooshaz/clean_service/core/contract/params"
@@ -51,19 +52,19 @@ func (s *userService) Get(id int) (*params.PublicUser, interfaces.IServiceError)
 }
 
 func (s *userService) Update(entry *params.EntryUser, isPartial bool) (*params.PublicUser, interfaces.IServiceError) {
-
+	fmt.Println("test service") // todo delete
 	user, serErr := s.Repo.Get(entry.ID)
 	if serErr != nil {
 		return nil, serErr
 	}
 
 	if isPartial {
-		partialUpdate(user, entry)
+		user = partialUpdate(user, entry)
 	} else {
 		if serErr := validate(entry); serErr != nil {
 			return nil, serErr
 		}
-		generalUpdate(user, entry)
+		user = generalUpdate(user, entry)
 	}
 
 	user, serErr = s.Repo.Update(user)
@@ -114,7 +115,10 @@ func validate(user *params.EntryUser) interfaces.IServiceError {
 	return nil
 }
 
-func partialUpdate(user *entity.User, entry *params.EntryUser) {
+func partialUpdate(user *entity.User, entry *params.EntryUser) *entity.User {
+	if entry.Username != "" {
+		user.Username = entry.Username
+	}
 	if entry.FirstName != "" {
 		user.FirstName = entry.FirstName
 	}
@@ -127,11 +131,14 @@ func partialUpdate(user *entity.User, entry *params.EntryUser) {
 	if entry.Password != "" {
 		user.Password = bcrypt.GetMd5(entry.Password)
 	}
+	return user
 }
 
-func generalUpdate(user *entity.User, entry *params.EntryUser) {
+func generalUpdate(user *entity.User, entry *params.EntryUser) *entity.User {
+	user.Username = entry.Username
 	user.FirstName = entry.FirstName
 	user.LastName = entry.LastName
 	user.Email = entry.Email
 	user.Password = bcrypt.GetMd5(entry.Password)
+	return user
 }
