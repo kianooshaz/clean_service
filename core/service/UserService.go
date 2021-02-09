@@ -5,8 +5,8 @@ import (
 	"github.com/kianooshaz/clean_service/core/contract/interfaces"
 	"github.com/kianooshaz/clean_service/core/contract/param"
 	"github.com/kianooshaz/clean_service/core/entity"
-	"github.com/kianooshaz/clean_service/core/utils/bcrypt"
-	"github.com/kianooshaz/clean_service/core/utils/errors"
+	"github.com/kianooshaz/clean_service/core/pkg/bcrypt"
+	"github.com/kianooshaz/clean_service/core/pkg/errors"
 	"regexp"
 )
 

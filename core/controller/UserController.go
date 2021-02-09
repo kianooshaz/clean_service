@@ -3,7 +3,7 @@ package controller
 import (
 	"github.com/kianooshaz/clean_service/core/contract/interfaces"
 	"github.com/kianooshaz/clean_service/core/contract/param"
-	"github.com/kianooshaz/clean_service/core/utils/errors"
+	"github.com/kianooshaz/clean_service/core/pkg/errors"
 	"github.com/labstack/echo/v4"
 	"net/http"
 	"strconv"

@@ -3,9 +3,9 @@ package app
 import (
 	"github.com/joho/godotenv"
 	"github.com/kianooshaz/clean_service/core/controller"
+	"github.com/kianooshaz/clean_service/core/pkg/logs"
 	"github.com/kianooshaz/clean_service/core/repository"
 	"github.com/kianooshaz/clean_service/core/service"
-	"github.com/kianooshaz/clean_service/core/utils/logs"
 	"github.com/labstack/echo/v4"
 	"os"
 )
