@@ -1,9 +1,9 @@
-package services
+package service
 
 import (
 	"github.com/kianooshaz/clean_service/core/contract/convertor"
 	"github.com/kianooshaz/clean_service/core/contract/interfaces"
-	"github.com/kianooshaz/clean_service/core/contract/params"
+	"github.com/kianooshaz/clean_service/core/contract/param"
 	"github.com/kianooshaz/clean_service/core/entity"
 	"github.com/kianooshaz/clean_service/core/utils/bcrypt"
 	"github.com/kianooshaz/clean_service/core/utils/errors"
@@ -23,7 +23,7 @@ func NewUserService(repo interfaces.IUserRepository) interfaces.IUserService {
 	}
 }
 
-func (s *userService) Create(entry *params.EntryUser) (*params.PublicUser, interfaces.IServiceError) {
+func (s *userService) Create(entry *param.EntryUser) (*param.PublicUser, interfaces.IServiceError) {
 
 	if serErr := validate(entry); serErr != nil {
 		return nil, serErr
@@ -40,7 +40,7 @@ func (s *userService) Create(entry *params.EntryUser) (*params.PublicUser, inter
 	return convertor.ConvertUserToPublicUser(user), nil
 }
 
-func (s *userService) Get(id int) (*params.PublicUser, interfaces.IServiceError) {
+func (s *userService) Get(id int) (*param.PublicUser, interfaces.IServiceError) {
 
 	user, serErr := s.Repo.Get(id)
 	if serErr != nil {
@@ -50,7 +50,7 @@ func (s *userService) Get(id int) (*params.PublicUser, interfaces.IServiceError)
 	return convertor.ConvertUserToPublicUser(user), nil
 }
 
-func (s *userService) Update(entry *params.EntryUser, isPartial bool) (*params.PublicUser, interfaces.IServiceError) {
+func (s *userService) Update(entry *param.EntryUser, isPartial bool) (*param.PublicUser, interfaces.IServiceError) {
 	user, serErr := s.Repo.Get(entry.ID)
 	if serErr != nil {
 		return nil, serErr
@@ -82,14 +82,14 @@ func (s *userService) Delete(id int) interfaces.IServiceError {
 	return nil
 }
 
-func (s *userService) FindAll() ([]params.PublicUser, interfaces.IServiceError) {
+func (s *userService) FindAll() ([]param.PublicUser, interfaces.IServiceError) {
 
 	users, serErr := s.Repo.FindAll()
 	if serErr != nil {
 		return nil, serErr
 	}
 
-	var results []params.PublicUser
+	var results []param.PublicUser
 	for _, user := range users {
 		results = append(results, *convertor.ConvertUserToPublicUser(&user))
 	}
@@ -97,7 +97,7 @@ func (s *userService) FindAll() ([]params.PublicUser, interfaces.IServiceError) 
 	return results, nil
 }
 
-func validate(user *params.EntryUser) interfaces.IServiceError {
+func validate(user *param.EntryUser) interfaces.IServiceError {
 	if user.Email == "" {
 		return errors.NewBadRequestError("email is empty")
 	}
@@ -113,7 +113,7 @@ func validate(user *params.EntryUser) interfaces.IServiceError {
 	return nil
 }
 
-func partialUpdate(user *entity.User, entry *params.EntryUser) *entity.User {
+func partialUpdate(user *entity.User, entry *param.EntryUser) *entity.User {
 	if entry.Username != "" {
 		user.Username = entry.Username
 	}
@@ -132,7 +132,7 @@ func partialUpdate(user *entity.User, entry *params.EntryUser) *entity.User {
 	return user
 }
 
-func generalUpdate(user *entity.User, entry *params.EntryUser) *entity.User {
+func generalUpdate(user *entity.User, entry *param.EntryUser) *entity.User {
 	user.Username = entry.Username
 	user.FirstName = entry.FirstName
 	user.LastName = entry.LastName

@@ -1,8 +1,8 @@
-package controllers
+package controller
 
 import (
 	"github.com/kianooshaz/clean_service/core/contract/interfaces"
-	"github.com/kianooshaz/clean_service/core/contract/params"
+	"github.com/kianooshaz/clean_service/core/contract/param"
 	"github.com/kianooshaz/clean_service/core/utils/errors"
 	"github.com/labstack/echo/v4"
 	"net/http"
@@ -21,7 +21,7 @@ func NewUserController(service interfaces.IUserService) interfaces.IUserControll
 
 func (u userController) Create(c echo.Context) error {
 
-	user := &params.EntryUser{}
+	user := &param.EntryUser{}
 	if err := c.Bind(user); err != nil {
 		return c.JSON(http.StatusBadRequest, errors.NewBadRequestError("invalid json body"))
 	}
@@ -50,7 +50,7 @@ func (u userController) Get(c echo.Context) error {
 }
 
 func (u userController) Update(c echo.Context) error {
-	user := &params.EntryUser{}
+	user := &param.EntryUser{}
 	if err := c.Bind(user); err != nil {
 		return c.JSON(http.StatusBadRequest, errors.NewBadRequestError("invalid json body"))
 	}

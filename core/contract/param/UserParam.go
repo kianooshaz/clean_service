@@ -1,4 +1,4 @@
-package params
+package param
 
 type PublicUser struct {
 	ID        int    `json:"id"`

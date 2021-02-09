@@ -1,12 +1,12 @@
 package convertor
 
 import (
-	"github.com/kianooshaz/clean_service/core/contract/params"
+	"github.com/kianooshaz/clean_service/core/contract/param"
 	"github.com/kianooshaz/clean_service/core/entity"
 )
 
-func ConvertUserToPublicUser(user *entity.User) *params.PublicUser {
-	return &params.PublicUser{
+func ConvertUserToPublicUser(user *entity.User) *param.PublicUser {
+	return &param.PublicUser{
 		ID:        int(user.ID),
 		Username:  user.Username,
 		FirstName: user.FirstName,
@@ -16,7 +16,7 @@ func ConvertUserToPublicUser(user *entity.User) *params.PublicUser {
 	}
 }
 
-func ConvertEntryUserToUser(entry *params.EntryUser) *entity.User {
+func ConvertEntryUserToUser(entry *param.EntryUser) *entity.User {
 	return &entity.User{
 		Base:      entity.Base{ID: uint(entry.ID)},
 		Username:  entry.Username,

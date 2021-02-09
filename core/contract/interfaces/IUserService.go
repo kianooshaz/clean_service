@@ -1,13 +1,13 @@
 package interfaces
 
 import (
-	"github.com/kianooshaz/clean_service/core/contract/params"
+	"github.com/kianooshaz/clean_service/core/contract/param"
 )
 
 type IUserService interface {
-	Create(entry *params.EntryUser) (*params.PublicUser, IServiceError)
-	Get(id int) (*params.PublicUser, IServiceError)
-	Update(entry *params.EntryUser, isPartial bool) (*params.PublicUser, IServiceError)
+	Create(entry *param.EntryUser) (*param.PublicUser, IServiceError)
+	Get(id int) (*param.PublicUser, IServiceError)
+	Update(entry *param.EntryUser, isPartial bool) (*param.PublicUser, IServiceError)
 	Delete(id int) IServiceError
-	FindAll() ([]params.PublicUser, IServiceError)
+	FindAll() ([]param.PublicUser, IServiceError)
 }
