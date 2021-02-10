@@ -1,0 +1,15 @@
+server:
+  host: "localhost"
+  port: 8081
+
+database:
+  username: "postgres"
+  password: "19478"
+  db_name: "simple_ca"
+  host: "localhost"
+  port: "5432"
+  charset: "utf8mb4"
+  ssl_mode: "disable"
+  timezone: "Asia/Tehran"
+
+hash_id:

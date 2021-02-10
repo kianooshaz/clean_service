@@ -1,3 +1,7 @@
 WARNING: 2021/02/09 15:37:45 User.go:81: WHERE conditions required
 WARNING: 2021/02/09 15:38:54 User.go:81: ERROR: syntax error at or near "$11" (SQLSTATE 42601)
 WARNING: 2021/02/09 15:39:09 User.go:81: ERROR: syntax error at or near "$11" (SQLSTATE 42601)
+ERROR: 2021/02/10 18:53:24 Application.go:28: open ./core/config.yml: The system cannot find the file specified.
+ERROR: 2021/02/10 18:54:03 Application.go:28: open ./core/config.yml: The system cannot find the file specified.
+ERROR: 2021/02/10 18:54:41 Application.go:28: yaml: unmarshal errors:
+  line 3: cannot unmarshal !!str `8081` into int
