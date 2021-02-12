@@ -5,3 +5,7 @@ ERROR: 2021/02/10 18:53:24 Application.go:28: open ./core/config.yml: The system
 ERROR: 2021/02/10 18:54:03 Application.go:28: open ./core/config.yml: The system cannot find the file specified.
 ERROR: 2021/02/10 18:54:41 Application.go:28: yaml: unmarshal errors:
   line 3: cannot unmarshal !!str `8081` into int
+ERROR: 2021/02/12 14:56:51 main.go:31: open ./core/config/config.yml: The system cannot find the path specified.
+ERROR: 2021/02/12 17:03:34 main.go:31: open ./core/config/config.yml: The system cannot find the path specified.
+ERROR: 2021/02/12 17:03:47 main.go:31: open ./core/config/config.yml: The system cannot find the path specified.
+ERROR: 2021/02/12 17:03:54 main.go:31: open ./core/config/config.yml: The system cannot find the path specified.

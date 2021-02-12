@@ -1,4 +1,4 @@
-package interactor
+package user
 
 import (
 	"github.com/kianooshaz/clean_service/contract"
@@ -15,7 +15,7 @@ type userService struct {
 	Repo contract.IUserRepository
 }
 
-func NewUserService(repo contract.IUserRepository) contract.IUserService {
+func NewService(repo contract.IUserRepository) contract.IUserService {
 
 	return &userService{
 		Repo: repo,
@@ -31,7 +31,7 @@ func (s *userService) Create(entry *param.EntryUser) (*param.PublicUser, contrac
 	user := param.ConvertEntryUserToUser(entry)
 	user.Password = bcrypt.GetMd5(user.Password)
 
-	user, serErr := s.Repo.Create(user)
+	user, serErr := s.Repo.CreateUser(user)
 	if serErr != nil {
 		return nil, serErr
 	}
@@ -41,7 +41,7 @@ func (s *userService) Create(entry *param.EntryUser) (*param.PublicUser, contrac
 
 func (s *userService) Get(id int) (*param.PublicUser, contract.IServiceError) {
 
-	user, serErr := s.Repo.Get(id)
+	user, serErr := s.Repo.GetUserByID(id)
 	if serErr != nil {
 		return nil, serErr
 	}
@@ -50,7 +50,7 @@ func (s *userService) Get(id int) (*param.PublicUser, contract.IServiceError) {
 }
 
 func (s *userService) Update(entry *param.EntryUser, isPartial bool) (*param.PublicUser, contract.IServiceError) {
-	user, serErr := s.Repo.Get(entry.ID)
+	user, serErr := s.Repo.GetUserByID(entry.ID)
 	if serErr != nil {
 		return nil, serErr
 	}
@@ -64,7 +64,7 @@ func (s *userService) Update(entry *param.EntryUser, isPartial bool) (*param.Pub
 		user = generalUpdate(user, entry)
 	}
 
-	user, serErr = s.Repo.Update(user)
+	user, serErr = s.Repo.UpdateUser(user)
 	if serErr != nil {
 		return nil, serErr
 	}
@@ -74,7 +74,7 @@ func (s *userService) Update(entry *param.EntryUser, isPartial bool) (*param.Pub
 
 func (s *userService) Delete(id int) contract.IServiceError {
 
-	if serErr := s.Repo.Delete(id); serErr != nil {
+	if serErr := s.Repo.DeleteUserByID(id); serErr != nil {
 		return serErr
 	}
 
@@ -83,7 +83,7 @@ func (s *userService) Delete(id int) contract.IServiceError {
 
 func (s *userService) FindAll() ([]param.PublicUser, contract.IServiceError) {
 
-	users, serErr := s.Repo.FindAll()
+	users, serErr := s.Repo.FindAllUser()
 	if serErr != nil {
 		return nil, serErr
 	}
