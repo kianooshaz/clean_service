@@ -1,35 +1,34 @@
-package service
+package interactor
 
 import (
-	"github.com/kianooshaz/clean_service/core/contract/convertor"
-	"github.com/kianooshaz/clean_service/core/contract/interfaces"
-	"github.com/kianooshaz/clean_service/core/contract/param"
-	"github.com/kianooshaz/clean_service/core/entity"
-	"github.com/kianooshaz/clean_service/core/pkg/bcrypt"
-	"github.com/kianooshaz/clean_service/core/pkg/errors"
+	"github.com/kianooshaz/clean_service/contract"
+	"github.com/kianooshaz/clean_service/entity"
+	"github.com/kianooshaz/clean_service/param"
+	"github.com/kianooshaz/clean_service/pkg/bcrypt"
+	"github.com/kianooshaz/clean_service/pkg/errors"
 	"regexp"
 )
 
 var emailRegex = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
 
 type userService struct {
-	Repo interfaces.IUserRepository
+	Repo contract.IUserRepository
 }
 
-func NewUserService(repo interfaces.IUserRepository) interfaces.IUserService {
+func NewUserService(repo contract.IUserRepository) contract.IUserService {
 
 	return &userService{
 		Repo: repo,
 	}
 }
 
-func (s *userService) Create(entry *param.EntryUser) (*param.PublicUser, interfaces.IServiceError) {
+func (s *userService) Create(entry *param.EntryUser) (*param.PublicUser, contract.IServiceError) {
 
 	if serErr := validate(entry); serErr != nil {
 		return nil, serErr
 	}
 
-	user := convertor.ConvertEntryUserToUser(entry)
+	user := param.ConvertEntryUserToUser(entry)
 	user.Password = bcrypt.GetMd5(user.Password)
 
 	user, serErr := s.Repo.Create(user)
@@ -37,20 +36,20 @@ func (s *userService) Create(entry *param.EntryUser) (*param.PublicUser, interfa
 		return nil, serErr
 	}
 
-	return convertor.ConvertUserToPublicUser(user), nil
+	return param.ConvertUserToPublicUser(user), nil
 }
 
-func (s *userService) Get(id int) (*param.PublicUser, interfaces.IServiceError) {
+func (s *userService) Get(id int) (*param.PublicUser, contract.IServiceError) {
 
 	user, serErr := s.Repo.Get(id)
 	if serErr != nil {
 		return nil, serErr
 	}
 
-	return convertor.ConvertUserToPublicUser(user), nil
+	return param.ConvertUserToPublicUser(user), nil
 }
 
-func (s *userService) Update(entry *param.EntryUser, isPartial bool) (*param.PublicUser, interfaces.IServiceError) {
+func (s *userService) Update(entry *param.EntryUser, isPartial bool) (*param.PublicUser, contract.IServiceError) {
 	user, serErr := s.Repo.Get(entry.ID)
 	if serErr != nil {
 		return nil, serErr
@@ -70,10 +69,10 @@ func (s *userService) Update(entry *param.EntryUser, isPartial bool) (*param.Pub
 		return nil, serErr
 	}
 
-	return convertor.ConvertUserToPublicUser(user), nil
+	return param.ConvertUserToPublicUser(user), nil
 }
 
-func (s *userService) Delete(id int) interfaces.IServiceError {
+func (s *userService) Delete(id int) contract.IServiceError {
 
 	if serErr := s.Repo.Delete(id); serErr != nil {
 		return serErr
@@ -82,7 +81,7 @@ func (s *userService) Delete(id int) interfaces.IServiceError {
 	return nil
 }
 
-func (s *userService) FindAll() ([]param.PublicUser, interfaces.IServiceError) {
+func (s *userService) FindAll() ([]param.PublicUser, contract.IServiceError) {
 
 	users, serErr := s.Repo.FindAll()
 	if serErr != nil {
@@ -91,13 +90,13 @@ func (s *userService) FindAll() ([]param.PublicUser, interfaces.IServiceError) {
 
 	var results []param.PublicUser
 	for _, user := range users {
-		results = append(results, *convertor.ConvertUserToPublicUser(&user))
+		results = append(results, *param.ConvertUserToPublicUser(&user))
 	}
 
 	return results, nil
 }
 
-func validate(user *param.EntryUser) interfaces.IServiceError {
+func validate(user *param.EntryUser) contract.IServiceError {
 	if user.Email == "" {
 		return errors.NewBadRequestError("email is empty")
 	}

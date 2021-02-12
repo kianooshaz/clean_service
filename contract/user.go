@@ -1,7 +1,7 @@
-package interfaces
+package contract
 
 import (
-	"github.com/kianooshaz/clean_service/core/contract/param"
+	"github.com/kianooshaz/clean_service/param"
 )
 
 type IUserService interface {

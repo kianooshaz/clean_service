@@ -1,8 +1,8 @@
 package server
 
 import (
-	"github.com/kianooshaz/clean_service/core/contract/param"
-	"github.com/kianooshaz/clean_service/core/pkg/errors"
+	"github.com/kianooshaz/clean_service/param"
+	"github.com/kianooshaz/clean_service/pkg/errors"
 	"github.com/labstack/echo/v4"
 	"net/http"
 	"strconv"

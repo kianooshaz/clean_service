@@ -1,4 +1,4 @@
-package interfaces
+package contract
 
 type IServiceError interface {
 	GetMessage() string

@@ -4,10 +4,10 @@ import (
 	er "errors"
 	"fmt"
 	"github.com/joho/godotenv"
-	"github.com/kianooshaz/clean_service/core/contract/interfaces"
-	"github.com/kianooshaz/clean_service/core/entity"
-	"github.com/kianooshaz/clean_service/core/pkg/errors"
-	"github.com/kianooshaz/clean_service/core/pkg/logs"
+	"github.com/kianooshaz/clean_service/contract"
+	"github.com/kianooshaz/clean_service/entity"
+	"github.com/kianooshaz/clean_service/pkg/errors"
+	"github.com/kianooshaz/clean_service/pkg/logs"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 	"os"
@@ -44,12 +44,12 @@ func init() {
 		logs.ErrorLogger.Fatalln(err)
 	}
 }
-func NewUserRepository() interfaces.IUserRepository {
+func NewUserRepository() contract.IUserRepository {
 
 	return &userRepository{}
 }
 
-func (u userRepository) Create(user *entity.User) (*entity.User, interfaces.IServiceError) {
+func (u userRepository) Create(user *entity.User) (*entity.User, contract.IServiceError) {
 
 	if err := db.Create(user).Error; err != nil {
 		logs.WarningLogger.Println(err)
@@ -59,7 +59,7 @@ func (u userRepository) Create(user *entity.User) (*entity.User, interfaces.ISer
 	return user, nil
 }
 
-func (u userRepository) Get(id int) (*entity.User, interfaces.IServiceError) {
+func (u userRepository) Get(id int) (*entity.User, contract.IServiceError) {
 
 	user := &entity.User{Base: entity.Base{ID: uint(id)}}
 
@@ -75,7 +75,7 @@ func (u userRepository) Get(id int) (*entity.User, interfaces.IServiceError) {
 	return user, nil
 }
 
-func (u userRepository) Update(user *entity.User) (*entity.User, interfaces.IServiceError) {
+func (u userRepository) Update(user *entity.User) (*entity.User, contract.IServiceError) {
 	if err := db.Save(user).Error; err != nil {
 		logs.WarningLogger.Println(err)
 		return nil, errors.NewInternalServerError("database error", err)
@@ -84,7 +84,7 @@ func (u userRepository) Update(user *entity.User) (*entity.User, interfaces.ISer
 	return user, nil
 }
 
-func (u userRepository) Delete(id int) interfaces.IServiceError {
+func (u userRepository) Delete(id int) contract.IServiceError {
 
 	user := &entity.User{Base: entity.Base{ID: uint(id)}}
 	if err := db.Delete(user).Error; err != nil {
@@ -98,7 +98,7 @@ func (u userRepository) Delete(id int) interfaces.IServiceError {
 	return nil
 }
 
-func (u userRepository) FindAll() ([]entity.User, interfaces.IServiceError) {
+func (u userRepository) FindAll() ([]entity.User, contract.IServiceError) {
 	var users []entity.User
 	if err := db.Find(&users).Error; err != nil {
 		if er.Is(err, gorm.ErrRecordNotFound) {

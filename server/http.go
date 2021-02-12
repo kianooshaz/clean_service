@@ -2,8 +2,8 @@ package server
 
 import (
 	"fmt"
-	"github.com/kianooshaz/clean_service/core/config"
-	"github.com/kianooshaz/clean_service/core/contract/interfaces"
+	"github.com/kianooshaz/clean_service/config"
+	"github.com/kianooshaz/clean_service/contract"
 	"github.com/labstack/echo/v4"
 )
 
@@ -14,7 +14,7 @@ type httpServer struct {
 	user     *echo.Group
 }
 
-func NewHttpServer(cfg config.Config, user interfaces.IUserService) *httpServer {
+func NewHttpServer(cfg config.Config, user contract.IUserService) *httpServer {
 	userRoute := e.Group("/users")
 	return &httpServer{
 		handlers: NewHandlers(cfg, user),

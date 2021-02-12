@@ -2,7 +2,7 @@ package errors
 
 import (
 	"encoding/json"
-	"github.com/kianooshaz/clean_service/core/contract/interfaces"
+	"github.com/kianooshaz/clean_service/contract"
 	"net/http"
 )
 
@@ -29,12 +29,12 @@ func (e *serviceError) GetCauses() []interface{} {
 	return e.Causes
 }
 
-func (e *serviceError) AppendCause(causes interface{}) interfaces.IServiceError {
+func (e *serviceError) AppendCause(causes interface{}) contract.IServiceError {
 	e.Causes = append(e.Causes, causes)
 	return e
 }
 
-func NewServiceError(message string, status int, error string, causes []interface{}) interfaces.IServiceError {
+func NewServiceError(message string, status int, error string, causes []interface{}) contract.IServiceError {
 	return &serviceError{
 		Message: message,
 		Status:  status,
@@ -43,14 +43,14 @@ func NewServiceError(message string, status int, error string, causes []interfac
 	}
 }
 
-func NewServiceErrorFromByte(bytes []byte) (error interfaces.IServiceError, ok bool) {
+func NewServiceErrorFromByte(bytes []byte) (error contract.IServiceError, ok bool) {
 	if err := json.Unmarshal(bytes, &error); err != nil {
 		return nil, false
 	}
 	return error, true
 }
 
-func NewBadRequestError(message string) interfaces.IServiceError {
+func NewBadRequestError(message string) contract.IServiceError {
 	return &serviceError{
 		Message: message,
 		Status:  http.StatusBadRequest,
@@ -58,7 +58,7 @@ func NewBadRequestError(message string) interfaces.IServiceError {
 	}
 }
 
-func NewNotFound(message string) interfaces.IServiceError {
+func NewNotFound(message string) contract.IServiceError {
 	return &serviceError{
 		Message: message,
 		Status:  http.StatusNotFound,
@@ -66,7 +66,7 @@ func NewNotFound(message string) interfaces.IServiceError {
 	}
 }
 
-func NewUnauthorizedError(message string) interfaces.IServiceError {
+func NewUnauthorizedError(message string) contract.IServiceError {
 	return &serviceError{
 		Message: message,
 		Status:  http.StatusUnauthorized,
@@ -74,7 +74,7 @@ func NewUnauthorizedError(message string) interfaces.IServiceError {
 	}
 }
 
-func NewInternalServerError(message string, err error) interfaces.IServiceError {
+func NewInternalServerError(message string, err error) contract.IServiceError {
 	result := &serviceError{
 		Message: message,
 		Status:  http.StatusInternalServerError,

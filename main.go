@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/kianooshaz/clean_service/core/app"
+	"github.com/kianooshaz/clean_service/cmd/api"
 )
 
 func main() {
-	app.StartApplication()
+	api.StartApplication()
 }

@@ -1,11 +1,11 @@
-package app
+package api
 
 import (
-	"github.com/kianooshaz/clean_service/core/config"
-	"github.com/kianooshaz/clean_service/core/pkg/logs"
-	"github.com/kianooshaz/clean_service/core/repository"
-	"github.com/kianooshaz/clean_service/core/server"
-	"github.com/kianooshaz/clean_service/core/service"
+	"github.com/kianooshaz/clean_service/config"
+	"github.com/kianooshaz/clean_service/interactor"
+	"github.com/kianooshaz/clean_service/pkg/logs"
+	"github.com/kianooshaz/clean_service/repository"
+	"github.com/kianooshaz/clean_service/server"
 	"github.com/labstack/echo/v4"
 	"os"
 )
@@ -36,7 +36,7 @@ func init() {
 }
 
 func StartApplication() {
-	userServ := service.NewUserService(repository.NewUserRepository())
+	userServ := interactor.NewUserService(repository.NewUserRepository())
 	httpServer := server.NewHttpServer(oCfg, userServ)
 	e.Logger.Fatal(httpServer.Start(oCfg.Server.Port))
 }

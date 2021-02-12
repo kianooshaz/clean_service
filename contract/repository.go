@@ -1,6 +1,6 @@
-package interfaces
+package contract
 
-import "github.com/kianooshaz/clean_service/core/entity"
+import "github.com/kianooshaz/clean_service/entity"
 
 type IUserRepository interface {
 	Create(user *entity.User) (*entity.User, IServiceError)

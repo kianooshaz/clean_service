@@ -4,7 +4,7 @@ import (
 	"crypto/md5"
 	"encoding/hex"
 	"github.com/joho/godotenv"
-	"github.com/kianooshaz/clean_service/core/pkg/logs"
+	"github.com/kianooshaz/clean_service/pkg/logs"
 	"os"
 )
 
