@@ -29,7 +29,7 @@ func (s *authService) GenerateAccessToken(user *entity.User) (string, contract.I
 		Username:       user.Email,
 		StandardClaims: jwt.StandardClaims{ExpiresAt: accessExpirationTime.Unix()},
 	}
-	accessToken := jwt.NewWithClaims(jwt.SigningMethodES256, clm)
+	accessToken := jwt.NewWithClaims(jwt.SigningMethodHS256, clm)
 	tokenString, err := accessToken.SignedString([]byte(s.config.JwtSecret))
 	if err != nil {
 		return "", errors.NewInternalServerError("jwt error", err)
