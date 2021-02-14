@@ -17,6 +17,14 @@ type userService struct {
 	config config.Config
 }
 
+func NewService(c config.Config, r contract.IUserRepository) contract.IUserService {
+
+	return &userService{
+		repo:   r,
+		config: c,
+	}
+}
+
 func (s *userService) Create(entry *param.EntryUser) (*param.PublicUser, contract.IServiceError) {
 
 	if serErr := validate(entry); serErr != nil {

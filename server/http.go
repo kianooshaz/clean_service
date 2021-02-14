@@ -14,6 +14,7 @@ var e = echo.New()
 type httpServer struct {
 	handlers *handlers
 	user     *echo.Group
+	v1       *echo.Group
 }
 
 func NewHttpServer(cfg config.Config, user contract.IUserService) *httpServer {
@@ -35,6 +36,9 @@ func NewHttpServer(cfg config.Config, user contract.IUserService) *httpServer {
 }
 
 func (h *httpServer) Start(port int) error {
+
+	h.v1.POST("/login", h.handlers.Login)
+
 	h.user.POST("", h.handlers.Create)
 	h.user.GET("/:id", h.handlers.Get)
 	h.user.PUT("", h.handlers.Update)

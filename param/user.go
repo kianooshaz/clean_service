@@ -18,3 +18,8 @@ type EntryUser struct {
 	Password  string `json:"password"`
 	Active    bool   `json:"active"`
 }
+
+type LoginRequestUser struct {
+	Username string `json:"username"`
+	Password string `json:"password"`
+}

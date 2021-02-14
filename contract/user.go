@@ -5,6 +5,8 @@ import (
 )
 
 type IUserService interface {
+	Login(req *param.LoginRequestUser) (*param.UserTokens, IServiceError)
+
 	Create(entry *param.EntryUser) (*param.PublicUser, IServiceError)
 	Get(id int) (*param.PublicUser, IServiceError)
 	Update(entry *param.EntryUser, isPartial bool) (*param.PublicUser, IServiceError)
