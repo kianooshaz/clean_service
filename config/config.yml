@@ -14,3 +14,10 @@ database:
 
 hash_id:
   salt: "a@sld%sad42$S@:)"
+
+authentication:
+  access_expiration_in_minute: 10080
+  activate_expiration_in_minute: 1440
+  password_reset_expiration_in_minute: 60
+  refresh_expiration_in_minute: 40320
+  jwt_secret: "P4rt0To73n:)"

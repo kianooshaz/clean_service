@@ -28,10 +28,12 @@ func NewHttpServer(cfg config.Config, user contract.IUserService) *httpServer {
 	e.Use(middleware.Recover())
 
 	userRoute := e.Group("/users")
+	v1 := e.Group("")
 
 	return &httpServer{
 		handlers: NewHandlers(cfg, user),
 		user:     userRoute,
+		v1:       v1,
 	}
 }
 

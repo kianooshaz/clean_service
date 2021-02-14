@@ -14,13 +14,13 @@ func (h *handlers) HealthCheck(c echo.Context) error {
 }
 
 func (h *handlers) Login(c echo.Context) error {
-	var req param.LoginRequestUser
+	req := &param.LoginRequestUser{}
 
 	if err := c.Bind(&req); err != nil {
 		return c.JSON(http.StatusBadRequest, errors.NewBadRequestError("invalid json body"))
 	}
 
-	token, serErr := h.user.Login(&req)
+	token, serErr := h.user.Login(req)
 	if serErr != nil {
 		return c.JSON(serErr.GetStatus(), serErr)
 	}

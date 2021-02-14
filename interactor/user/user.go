@@ -15,13 +15,15 @@ var emailRegex = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-
 type userService struct {
 	repo   contract.IUserRepository
 	config config.Config
+	auth   contract.IAuthService
 }
 
-func NewService(c config.Config, r contract.IUserRepository) contract.IUserService {
+func NewService(c config.Config, r contract.IUserRepository, a contract.IAuthService) contract.IUserService {
 
 	return &userService{
 		repo:   r,
 		config: c,
+		auth:   a,
 	}
 }
 
@@ -38,7 +40,6 @@ func (s *userService) Create(entry *param.EntryUser) (*param.PublicUser, contrac
 	if serErr != nil {
 		return nil, serErr
 	}
-
 	return param.ConvertUserToPublicUser(user), nil
 }
 
@@ -101,6 +102,43 @@ func (s *userService) FindAll() ([]param.PublicUser, contract.IServiceError) {
 	}
 
 	return results, nil
+}
+
+func (s *userService) Login(r *param.LoginRequestUser) (*param.UserTokens, contract.IServiceError) {
+	entryUser := &param.EntryUser{
+		Email:    r.Email,
+		Password: r.Password,
+	}
+
+	if serErr := validate(entryUser); serErr != nil {
+		return nil, serErr
+	}
+
+	user, serErr := s.repo.GetUserByEmail(entryUser.Email)
+	if serErr != nil {
+		return nil, serErr
+	}
+
+	if user.Password != bcrypt.GetMd5(entryUser.Password, s.config.Salt) {
+		return nil, errors.NewUnauthorizedError("incorrect password")
+	}
+
+	accessToken, serErr := s.auth.GenerateAccessToken(user)
+	if serErr != nil {
+		return nil, serErr
+	}
+
+	refreshToken, serErr := s.auth.GenerateRefreshToken(user)
+	if serErr != nil {
+		return nil, serErr
+	}
+
+	tokens := &param.UserTokens{
+		AccessToken:  accessToken,
+		RefreshToken: refreshToken,
+	}
+
+	return tokens, nil
 }
 
 func validate(user *param.EntryUser) contract.IServiceError {

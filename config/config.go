@@ -6,10 +6,19 @@ type Config struct {
 	Server
 	Database
 	HashId
+	Authentication
 }
 
 func SetConfig(c *Config) {
 	cfg = c
+}
+
+type Authentication struct {
+	AccessExpirationInMinute        int    `yaml:"access_expiration_in_minute" json:"-"`
+	ActivateExpirationInMinute      int    `yaml:"activate_expiration_in_minute" json:"-"`
+	PasswordResetExpirationInMinute int    `yaml:"password_reset_expiration_in_minute" json:"-"`
+	RefreshExpirationInMinute       int    `yaml:"refresh_expiration_in_minute" json:"-"`
+	JwtSecret                       string `yaml:"jwt_secret" envconfig:"ORDER_JWT_SECRET" json:"-"`
 }
 
 type Server struct {
@@ -29,5 +38,6 @@ type Database struct {
 }
 
 type HashId struct {
-	Salt string `envconfig:"CLEAN_SERVICE_HASH_ID_SALT" json:"-"`
+	Salt      string `envconfig:"CLEAN_SERVICE_HASH_ID_SALT" json:"-"`
+	MinLength int    `yaml:"min_length" json:"-"`
 }

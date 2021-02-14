@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/kianooshaz/clean_service/config"
 	"github.com/kianooshaz/clean_service/entity"
+	"github.com/kianooshaz/clean_service/interactor/auth"
 	"github.com/kianooshaz/clean_service/interactor/user"
 	"github.com/kianooshaz/clean_service/pkg/logs"
 	"github.com/kianooshaz/clean_service/repository/psql"
@@ -62,7 +63,8 @@ func main() {
 	}
 
 	repo := psql.New(db)
-	userService := user.NewService(oCfg, repo)
+	authService := auth.NewAuthService(oCfg)
+	userService := user.NewService(oCfg, repo, authService)
 	httpService := server.NewHttpServer(oCfg, userService)
 	e.Logger.Fatal(httpService.Start(oCfg.Server.Port))
 }
