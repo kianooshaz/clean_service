@@ -62,7 +62,7 @@ func main() {
 	}
 
 	repo := psql.New(db)
-	userSvc := user.NewService(repo)
-	httpSvc := server.NewHttpServer(oCfg, userSvc)
-	e.Logger.Fatal(httpSvc.Start(oCfg.Server.Port))
+	userService := user.NewService(oCfg, repo)
+	httpService := server.NewHttpServer(oCfg, userService)
+	e.Logger.Fatal(httpService.Start(oCfg.Server.Port))
 }

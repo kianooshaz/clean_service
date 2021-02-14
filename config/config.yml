@@ -4,7 +4,7 @@ server:
 
 database:
   username: "postgres"
-  password: "1234"
+  password: "19478"
   db_name: "simple_ca"
   host: "localhost"
   port: "5432"
@@ -13,3 +13,4 @@ database:
   timezone: "Asia/Tehran"
 
 hash_id:
+  salt: "a@sld%sad42$S@:)"

@@ -34,6 +34,17 @@ func (e *serviceError) AppendCause(causes interface{}) contract.IServiceError {
 	return e
 }
 
+func (e *serviceError) IsEqual(err contract.IServiceError) bool {
+	if e.GetStatus() != err.GetStatus() {
+		return false
+	} else if e.GetMessage() != err.GetMessage() {
+		return false
+	} else if e.GetError() != err.GetError() {
+		return false
+	}
+	return true
+}
+
 func NewServiceError(message string, status int, error string, causes []interface{}) contract.IServiceError {
 	return &serviceError{
 		Message: message,

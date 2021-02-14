@@ -1,6 +1,7 @@
 package user
 
 import (
+	"github.com/kianooshaz/clean_service/config"
 	"github.com/kianooshaz/clean_service/contract"
 	"github.com/kianooshaz/clean_service/entity"
 	"github.com/kianooshaz/clean_service/param"
@@ -12,13 +13,15 @@ import (
 var emailRegex = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
 
 type userService struct {
-	Repo contract.IUserRepository
+	repo   contract.IUserRepository
+	config config.Config
 }
 
-func NewService(repo contract.IUserRepository) contract.IUserService {
+func NewService(c config.Config, r contract.IUserRepository) contract.IUserService {
 
 	return &userService{
-		Repo: repo,
+		repo:   r,
+		config: c,
 	}
 }
 
@@ -29,9 +32,9 @@ func (s *userService) Create(entry *param.EntryUser) (*param.PublicUser, contrac
 	}
 
 	user := param.ConvertEntryUserToUser(entry)
-	user.Password = bcrypt.GetMd5(user.Password)
+	user.Password = bcrypt.GetMd5(user.Password, s.config.Salt)
 
-	user, serErr := s.Repo.CreateUser(user)
+	user, serErr := s.repo.CreateUser(user)
 	if serErr != nil {
 		return nil, serErr
 	}
@@ -41,7 +44,7 @@ func (s *userService) Create(entry *param.EntryUser) (*param.PublicUser, contrac
 
 func (s *userService) Get(id int) (*param.PublicUser, contract.IServiceError) {
 
-	user, serErr := s.Repo.GetUserByID(id)
+	user, serErr := s.repo.GetUserByID(id)
 	if serErr != nil {
 		return nil, serErr
 	}
@@ -50,21 +53,25 @@ func (s *userService) Get(id int) (*param.PublicUser, contract.IServiceError) {
 }
 
 func (s *userService) Update(entry *param.EntryUser, isPartial bool) (*param.PublicUser, contract.IServiceError) {
-	user, serErr := s.Repo.GetUserByID(entry.ID)
+	user, serErr := s.repo.GetUserByID(entry.ID)
 	if serErr != nil {
 		return nil, serErr
 	}
 
 	if isPartial {
 		user = partialUpdate(user, entry)
+		if entry.Password != "" {
+			user.Password = bcrypt.GetMd5(entry.Password, s.config.Salt)
+		}
 	} else {
 		if serErr := validate(entry); serErr != nil {
 			return nil, serErr
 		}
 		user = generalUpdate(user, entry)
+		user.Password = bcrypt.GetMd5(entry.Password, s.config.Salt)
 	}
 
-	user, serErr = s.Repo.UpdateUser(user)
+	user, serErr = s.repo.UpdateUser(user)
 	if serErr != nil {
 		return nil, serErr
 	}
@@ -74,7 +81,7 @@ func (s *userService) Update(entry *param.EntryUser, isPartial bool) (*param.Pub
 
 func (s *userService) Delete(id int) contract.IServiceError {
 
-	if serErr := s.Repo.DeleteUserByID(id); serErr != nil {
+	if serErr := s.repo.DeleteUserByID(id); serErr != nil {
 		return serErr
 	}
 
@@ -83,7 +90,7 @@ func (s *userService) Delete(id int) contract.IServiceError {
 
 func (s *userService) FindAll() ([]param.PublicUser, contract.IServiceError) {
 
-	users, serErr := s.Repo.FindAllUser()
+	users, serErr := s.repo.FindAllUser()
 	if serErr != nil {
 		return nil, serErr
 	}
@@ -125,9 +132,6 @@ func partialUpdate(user *entity.User, entry *param.EntryUser) *entity.User {
 	if entry.Email != "" {
 		user.Email = entry.Email
 	}
-	if entry.Password != "" {
-		user.Password = bcrypt.GetMd5(entry.Password)
-	}
 	return user
 }
 
@@ -136,6 +140,5 @@ func generalUpdate(user *entity.User, entry *param.EntryUser) *entity.User {
 	user.FirstName = entry.FirstName
 	user.LastName = entry.LastName
 	user.Email = entry.Email
-	user.Password = bcrypt.GetMd5(entry.Password)
 	return user
 }

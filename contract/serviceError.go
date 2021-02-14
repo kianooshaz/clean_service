@@ -6,4 +6,5 @@ type IServiceError interface {
 	GetError() string
 	GetCauses() []interface{}
 	AppendCause(causes interface{}) IServiceError
+	IsEqual(iServiceError IServiceError) bool
 }

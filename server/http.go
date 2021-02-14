@@ -5,6 +5,8 @@ import (
 	"github.com/kianooshaz/clean_service/config"
 	"github.com/kianooshaz/clean_service/contract"
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
+	"net/http"
 )
 
 var e = echo.New()
@@ -15,7 +17,17 @@ type httpServer struct {
 }
 
 func NewHttpServer(cfg config.Config, user contract.IUserService) *httpServer {
+
+	e.Use(middleware.CORSWithConfig(middleware.CORSConfig{
+		AllowOrigins: []string{"*"},
+		AllowMethods: []string{http.MethodPost, http.MethodGet, http.MethodPut, http.MethodPatch, http.MethodDelete},
+	}))
+	e.Use(middleware.Gzip())
+	e.Use(middleware.RequestIDWithConfig(middleware.RequestIDConfig{}))
+	e.Use(middleware.Recover())
+
 	userRoute := e.Group("/users")
+
 	return &httpServer{
 		handlers: NewHandlers(cfg, user),
 		user:     userRoute,
