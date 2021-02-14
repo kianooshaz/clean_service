@@ -48,8 +48,8 @@ func (s *authService) GenerateRefreshToken(user *entity.User) (string, contract.
 		Username:       user.Email,
 		StandardClaims: jwt.StandardClaims{ExpiresAt: refreshExpirationTime.Unix()},
 	}
-	accessToken := jwt.NewWithClaims(jwt.SigningMethodES256, clm)
-	tokenString, err := accessToken.SignedString([]byte(s.config.JwtSecret))
+	refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, clm)
+	tokenString, err := refreshToken.SignedString([]byte(s.config.JwtSecret))
 	if err != nil {
 		return "", errors.NewInternalServerError("jwt error", err)
 	}
