@@ -6,12 +6,13 @@ import (
 	"github.com/kianooshaz/clean_service/entity"
 	"github.com/kianooshaz/clean_service/interactor/auth"
 	"github.com/kianooshaz/clean_service/interactor/user"
-	"github.com/kianooshaz/clean_service/pkg/logs"
+	"github.com/kianooshaz/clean_service/interactor/validation"
 	"github.com/kianooshaz/clean_service/repository/psql"
 	"github.com/kianooshaz/clean_service/server"
 	"github.com/labstack/echo/v4"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
+	"log"
 	"os"
 )
 
@@ -29,12 +30,12 @@ func init() {
 
 	err := config.ReadFile(&oCfg, cfgPath)
 	if err != nil {
-		logs.ErrorLogger.Fatalln(err)
+		log.Fatalln(err)
 	}
 
 	err = config.ReadEnv(&oCfg)
 	if err != nil {
-		logs.ErrorLogger.Fatalln(err)
+		log.Fatalln(err)
 	}
 
 	config.SetConfig(&oCfg)
@@ -55,16 +56,17 @@ func init() {
 func main() {
 	db, err := gorm.Open(postgres.Open(dbUri), &gorm.Config{})
 	if err != nil {
-		logs.ErrorLogger.Fatalln(err)
+		log.Fatalln(err)
 	}
 
 	if err := db.AutoMigrate(&entity.User{}); err != nil {
-		logs.ErrorLogger.Fatalln(err)
+		log.Fatalln(err)
 	}
 
 	repo := psql.New(db)
 	authService := auth.NewAuthService(oCfg)
-	userService := user.NewService(oCfg, repo, authService)
+	validateService := validation.NewValidate()
+	userService := user.NewService(oCfg, repo, authService, validateService)
 	httpService := server.NewHttpServer(oCfg, userService)
 	e.Logger.Fatal(httpService.Start(oCfg.Server.Port))
 }

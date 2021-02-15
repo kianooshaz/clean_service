@@ -7,29 +7,27 @@ import (
 	"github.com/kianooshaz/clean_service/param"
 	"github.com/kianooshaz/clean_service/pkg/bcrypt"
 	"github.com/kianooshaz/clean_service/pkg/errors"
-	"regexp"
 )
 
-var emailRegex = regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
-
 type userService struct {
-	repo   contract.IUserRepository
-	config config.Config
-	auth   contract.IAuthService
+	repo     contract.IUserRepository
+	config   config.Config
+	auth     contract.IAuthService
+	validate contract.IUserValidation
 }
 
-func NewService(c config.Config, r contract.IUserRepository, a contract.IAuthService) contract.IUserService {
+func NewService(c config.Config, r contract.IUserRepository, a contract.IAuthService, v contract.IUserValidation) contract.IUserService {
 
 	return &userService{
-		repo:   r,
-		config: c,
-		auth:   a,
+		repo:     r,
+		config:   c,
+		auth:     a,
+		validate: v,
 	}
 }
 
 func (s *userService) Create(entry *param.EntryUser) (*param.PublicUser, contract.IServiceError) {
-
-	if serErr := validate(entry); serErr != nil {
+	if serErr := s.validate.EmailAndPasswordValidation(entry); serErr != nil {
 		return nil, serErr
 	}
 
@@ -65,7 +63,7 @@ func (s *userService) Update(entry *param.EntryUser, isPartial bool) (*param.Pub
 			user.Password = bcrypt.GetMd5(entry.Password, s.config.Salt)
 		}
 	} else {
-		if serErr := validate(entry); serErr != nil {
+		if serErr := s.validate.EmailAndPasswordValidation(entry); serErr != nil {
 			return nil, serErr
 		}
 		user = generalUpdate(user, entry)
@@ -105,22 +103,23 @@ func (s *userService) FindAll() ([]param.PublicUser, contract.IServiceError) {
 }
 
 func (s *userService) Login(r *param.LoginRequestUser) (*param.UserTokens, contract.IServiceError) {
+	const section = errors.Section("Interactor.user.Login")
+
+	if serErr := s.validate.LoginValidation(r); serErr != nil {
+		return nil, serErr
+	}
+
 	entryUser := &param.EntryUser{
 		Email:    r.Email,
 		Password: r.Password,
 	}
-
-	if serErr := validate(entryUser); serErr != nil {
-		return nil, serErr
-	}
-
 	user, serErr := s.repo.GetUserByEmail(entryUser.Email)
 	if serErr != nil {
 		return nil, serErr
 	}
 
 	if user.Password != bcrypt.GetMd5(entryUser.Password, s.config.Salt) {
-		return nil, errors.NewUnauthorizedError("incorrect password")
+		return nil, errors.NewUnauthorizedError(section, "incorrect password")
 	}
 
 	accessToken, serErr := s.auth.GenerateAccessToken(user)
@@ -139,22 +138,6 @@ func (s *userService) Login(r *param.LoginRequestUser) (*param.UserTokens, contr
 	}
 
 	return tokens, nil
-}
-
-func validate(user *param.EntryUser) contract.IServiceError {
-	if user.Email == "" {
-		return errors.NewBadRequestError("email is empty")
-	}
-	if !emailRegex.MatchString(user.Email) {
-		return errors.NewBadRequestError("invalid email")
-	}
-	if user.Password == "" {
-		return errors.NewBadRequestError("password is empty")
-	}
-	if len(user.Password) < 8 {
-		return errors.NewBadRequestError("password is less than 8 characters")
-	}
-	return nil
 }
 
 func partialUpdate(user *entity.User, entry *param.EntryUser) *entity.User {

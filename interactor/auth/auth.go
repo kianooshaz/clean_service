@@ -20,6 +20,8 @@ func NewAuthService(config config.Config) contract.IAuthService {
 }
 
 func (s *authService) GenerateAccessToken(user *entity.User) (string, contract.IServiceError) {
+	const section = errors.Section("auth.GenerateAccessToken")
+
 	accessExpirationTime := time.Now().Add(time.Duration(s.config.AccessExpirationInMinute) * time.Minute)
 
 	clm := &claims.Claims{
@@ -32,13 +34,15 @@ func (s *authService) GenerateAccessToken(user *entity.User) (string, contract.I
 	accessToken := jwt.NewWithClaims(jwt.SigningMethodHS256, clm)
 	tokenString, err := accessToken.SignedString([]byte(s.config.JwtSecret))
 	if err != nil {
-		return "", errors.NewInternalServerError("jwt error", err)
+		return "", errors.NewInternalServerError(section, "jwt error", err)
 	}
 	return tokenString, nil
 
 }
 
 func (s *authService) GenerateRefreshToken(user *entity.User) (string, contract.IServiceError) {
+	const section = errors.Section("auth.GenerateRefreshToken")
+
 	refreshExpirationTime := time.Now().Add(time.Duration(s.config.RefreshExpirationInMinute) * time.Minute)
 
 	clm := &claims.Claims{
@@ -51,7 +55,7 @@ func (s *authService) GenerateRefreshToken(user *entity.User) (string, contract.
 	refreshToken := jwt.NewWithClaims(jwt.SigningMethodHS256, clm)
 	tokenString, err := refreshToken.SignedString([]byte(s.config.JwtSecret))
 	if err != nil {
-		return "", errors.NewInternalServerError("jwt error", err)
+		return "", errors.NewInternalServerError(section, "jwt error", err)
 	}
 	return tokenString, nil
 }
