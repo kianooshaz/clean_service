@@ -1,18 +1,19 @@
 package server
 
 import (
+	"net/http"
+	"strconv"
+
 	"github.com/kianooshaz/clean_service/param"
 	"github.com/kianooshaz/clean_service/pkg/errors"
 	"github.com/labstack/echo/v4"
-	"net/http"
-	"strconv"
 )
 
 func (h *handlers) Create(c echo.Context) error {
-
+	const section = errors.Section("server.Create")
 	user := &param.EntryUser{}
 	if err := c.Bind(user); err != nil {
-		return c.JSON(http.StatusBadRequest, errors.NewBadRequestError("invalid json body"))
+		return c.JSON(http.StatusBadRequest, errors.NewBadRequestError(section, "invalid json body"))
 	}
 
 	result, serErr := h.user.Create(user)
@@ -24,10 +25,11 @@ func (h *handlers) Create(c echo.Context) error {
 }
 
 func (h *handlers) Get(c echo.Context) error {
+	const section = errors.Section("server.Get")
 
 	ID, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, errors.NewBadRequestError("id should be number"))
+		return c.JSON(http.StatusBadRequest, errors.NewBadRequestError(section, "id should be number"))
 	}
 
 	result, serErr := h.user.Get(ID)
@@ -39,9 +41,11 @@ func (h *handlers) Get(c echo.Context) error {
 }
 
 func (h *handlers) Update(c echo.Context) error {
+	const section = errors.Section("server.Update")
+
 	user := &param.EntryUser{}
 	if err := c.Bind(user); err != nil {
-		return c.JSON(http.StatusBadRequest, errors.NewBadRequestError("invalid json body"))
+		return c.JSON(http.StatusBadRequest, errors.NewBadRequestError(section, "invalid json body"))
 	}
 
 	result, serErr := h.user.Update(user, isPartial(c.Request()))
@@ -53,10 +57,11 @@ func (h *handlers) Update(c echo.Context) error {
 }
 
 func (h *handlers) Delete(c echo.Context) error {
+	const section = errors.Section("server.Delete")
 
 	ID, err := strconv.Atoi(c.Param("id"))
 	if err != nil {
-		return c.JSON(http.StatusBadRequest, errors.NewBadRequestError("id should be number"))
+		return c.JSON(http.StatusBadRequest, errors.NewBadRequestError(section, "id should be number"))
 	}
 
 	if serErr := h.user.Delete(ID); serErr != nil {
