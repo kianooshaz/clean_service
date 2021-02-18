@@ -4,6 +4,7 @@ import (
 	"github.com/kianooshaz/clean_service/contract"
 	"github.com/kianooshaz/clean_service/param"
 	"github.com/kianooshaz/clean_service/pkg/errors"
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
@@ -37,15 +38,11 @@ func TestLoginValidation(t *testing.T) {
 			Password: "12345",
 		}, err: errors.NewBadRequestError(section, "password is less than 8 characters")},
 	}
+
 	for _, testCase := range testCases {
 		result := validateService.LoginValidation(testCase.user)
-		if result != nil {
-			if !result.IsEqual(testCase.err) {
-				t.Error(testCase.err, result)
-			}
-		} else if testCase.err != nil {
-			t.Error(testCase.err, result)
-		}
+
+		assert.Equal(t, testCase.err, result)
 	}
 
 }
@@ -103,14 +100,10 @@ func TestEmailAndPasswordValidation(t *testing.T) {
 			Active:    false,
 		}, err: errors.NewBadRequestError(section, "password is less than 8 characters")},
 	}
+
 	for _, testCase := range testCases {
 		result := validateService.EmailAndPasswordValidation(testCase.user)
-		if result != nil {
-			if !result.IsEqual(testCase.err) {
-				t.Error(testCase.err, result)
-			}
-		} else if testCase.err != nil {
-			t.Error(testCase.err, result)
-		}
+
+		assert.Equal(t, testCase.err, result)
 	}
 }
